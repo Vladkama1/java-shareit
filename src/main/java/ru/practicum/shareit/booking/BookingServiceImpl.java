@@ -38,9 +38,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingOutDto findById(Long userId, Long bookingId) {
-        return bookingMapper.toOutDTO
-                (bookingRepository.findBookingByIdAndBooker_IdOrIdAndItem_Owner_Id(bookingId, userId, bookingId, userId)
-                        .orElseThrow(() -> new NotFoundException("Заказа не существует по id: " + bookingId)));
+        return bookingMapper.toOutDTO(bookingRepository.findBookingByIdAndBooker_IdOrIdAndItem_Owner_Id(bookingId, userId, bookingId, userId)
+                .orElseThrow(() -> new NotFoundException("Заказа не существует по id: " + bookingId)));
     }
 
     @Override
