@@ -2,73 +2,70 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidEmailException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     @Override
     public UserDto findById(Long id) {
-        return userMapper.toDTO(userStorage.findById(id)
+        return userMapper.toDTO(userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователя не существует по id: " + id)));
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userMapper.toListDTO(userStorage.getAllUsers());
+        return userMapper.toListDTO(userRepository.findAll());
     }
 
     @Override
+    @Transactional
     public UserDto saveUser(UserDto userDTO) {
-        checkUserIdByEmail(userDTO);
-        return userMapper.toDTO(userStorage.saveUser(userMapper.toModel(userDTO)));
+        try {
+            return userMapper.toDTO(userRepository.save(userMapper.toModel(userDTO)));
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidEmailException(userDTO.getEmail() + " данная почта уже используется");
+        }
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        userStorage.delete(id);
+        userRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(final Long id, UserDto userDTO) {
         userDTO.setId(id);
-        User user = userStorage.findById(id).orElseThrow(() -> new NotFoundException("Пользователя не существует по id: " + id));
+        UserDto userDtoDB = userMapper.toDTO(userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователя не существует по id: " + id)));
         if (userDTO.getName() != null) {
-            user.setName(userDTO.getName());
+            userDtoDB.setName(userDTO.getName());
         }
         if (userDTO.getEmail() != null) {
-            checkUserIdByEmail(userDTO);
-            userStorage.deleteEmail(user.getEmail());
-            user.setEmail(userDTO.getEmail());
+            userDtoDB.setEmail(userDTO.getEmail());
         }
-        userStorage.updateUser(user);
-        return userMapper.toDTO(user);
+        return userMapper.toDTO(userRepository.save(userMapper.toModel(userDtoDB)));
     }
 
     @Override
     public boolean isExistUser(Long id) {
-        boolean exists = userStorage.existsById(id);
+        boolean exists = userRepository.existsById(id);
         return exists;
-    }
-    private void checkUserIdByEmail(UserDto userDto) {
-        final Long userEmail = userStorage.existsByEmail(userDto.getEmail());
-        if (userEmail != null) {
-            if (!userEmail.equals(userDto.getId())) {
-                log.error("Email отсутствует в базе: {}", userDto.getEmail());
-                throw new ValidEmailException("Данный email отсутствует в базе");
-            }
-        }
     }
 }

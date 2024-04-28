@@ -9,13 +9,13 @@ public interface UserService {
 
     UserDto findById(Long id);
 
-    boolean isExistUser(Long id);
-
     List<UserDto> getAllUsers();
 
     UserDto saveUser(UserDto userDTO);
 
     void delete(Long id);
+
+    boolean isExistUser(Long id);
 
     UserDto updateUser(Long id, UserDto userDTO);
 }

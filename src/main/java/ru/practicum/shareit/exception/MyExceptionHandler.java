@@ -13,30 +13,37 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class MyExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler
-    public ResponseEntity<Error> handleValidEmailException(final ValidEmailException e) {
+    @ExceptionHandler(ValidEmailException.class)
+    public ResponseEntity<ResponseError> handleValidEmailException(final ValidEmailException e) {
         log.error("Exception ValidEmailException: {}, статус ответа: {}", e.getMessage(), HttpStatus.CONFLICT);
-        return new ResponseEntity<>(new Error("Ошибка: " + e.getMessage()), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler
-    public ResponseEntity<Error> handleNotFoundException(final NotFoundException e) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ResponseError> handleNotFoundException(final NotFoundException e) {
         log.error("Exception NotFoundException: {}, статус ответа: {}", e.getMessage(), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(new Error("Ошибка: " + e.getMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ResponseEntity<Error> handleBadRequestException(final BadRequestException e) {
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ResponseError> handleBadRequestException(final BadRequestException e) {
         log.error("Exception BadRequestException: {}, статус ответа: {}", e.getMessage(), HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(new Error("Ошибка: " + e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ResponseEntity<Error> handleConstraintViolationException(final ConstraintViolationException e) {
+    @ExceptionHandler(UnsupportedStatus.class)
+    public ResponseEntity<ResponseError> handleUnsupportedStatus(final UnsupportedStatus e) {
+        log.error("Exception UnsupportedStatus: {}, статус ответа: {}", e.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ResponseError> handleConstraintViolationException(final ConstraintViolationException e) {
         log.error("Exception ConstraintViolationException: {}, статус ответа: {}", e.getMessage(), HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(new Error("Ошибка: " + e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
