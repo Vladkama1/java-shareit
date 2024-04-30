@@ -1,19 +1,34 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
     private Long id;
-    @Pattern(regexp = "^\\S*$", message = "ert")
+    @Pattern(regexp = "^\\S*$", message = "This name is incorrect")
     private String name;
-    @NotBlank
-    @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "ert")
+    @NotNull(message = "field email should not be empty")
+    @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Non standard writing of mail")
     private String email;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserDto)) return false;
+        return id != null && id.equals(((UserDto) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

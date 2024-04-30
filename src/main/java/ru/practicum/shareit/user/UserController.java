@@ -11,9 +11,7 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
+
 @Slf4j
 @Validated
 @RestController
@@ -45,7 +43,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@Valid @PathVariable Long userId, @RequestBody UserDto userDTO) {
+    public UserDto updateUser(@PathVariable Long userId, @RequestBody UserDto userDTO) {
         log.info("Получен запрос на обновление пользователя по id: {}", userId);
         UserDto userDTO1 = userService.updateUser(userId, userDTO);
         log.info("Обновлён пользователь: {}", userDTO1.getEmail());

@@ -5,25 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.item.dto.ItemOutDto;
+import ru.practicum.shareit.user.dto.UserOutDto;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingDto {
+public class BookingOutDto {
     private Long id;
-    @Future
-    @NotNull(message = "IsPositive can`t null!")
     private LocalDateTime start;
-    @Future
-    @NotNull(message = "IsPositive can`t null!")
     private LocalDateTime end;
-    @NotNull(message = "IsPositive can`t null!")
-    private Long itemId;
-    private Long bookerId;
+    private ItemOutDto item;
+    private UserOutDto booker;
     private Status status;
 }
