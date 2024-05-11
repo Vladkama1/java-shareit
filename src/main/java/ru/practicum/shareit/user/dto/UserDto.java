@@ -19,16 +19,4 @@ public class UserDto {
     @NotNull(message = "field email should not be empty")
     @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Non standard writing of mail")
     private String email;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserDto)) return false;
-        return id != null && id.equals(((UserDto) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

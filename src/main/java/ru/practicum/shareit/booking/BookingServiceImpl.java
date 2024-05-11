@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -84,14 +86,12 @@ public class BookingServiceImpl implements BookingService {
                 throw new BadRequestException("Уже отменено");
             }
             booking.setStatus(REJECTED);
-        } else {
-            throw new BadRequestException("Некорректный статус");
         }
         return bookingMapper.toOutDTO(bookingRepository.save(booking));
     }
 
     @Override
-    public List<BookingOutDto> findByBookerAndState(Long userId, String state) {
+    public List<BookingOutDto> findByBookerAndState(Long userId, String state, Integer from, Integer size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь " + userId + " не найден"));
 
@@ -103,27 +103,28 @@ public class BookingServiceImpl implements BookingService {
         }
 
         LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from / size, size);
 
         switch (bookingState) {
             case ALL:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdOrderByEndDesc(userId));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdOrderByEndDesc(userId, pageable).getContent());
             case CURRENT:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndStartLessThanEqualAndEndGreaterThanEqualOrderByEndDesc(userId, now, now));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndStartLessThanEqualAndEndGreaterThanEqualOrderByEndDesc(userId, now, now, pageable).getContent());
             case PAST:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndEndLessThanOrderByEndDesc(userId, now));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndEndLessThanOrderByEndDesc(userId, now, pageable).getContent());
             case FUTURE:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndStartGreaterThanOrderByEndDesc(userId, now));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndStartGreaterThanOrderByEndDesc(userId, now, pageable).getContent());
             case WAITING:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndStatusOrderByEndDesc(userId, WAITING));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndStatusOrderByEndDesc(userId, WAITING, pageable).getContent());
             case REJECTED:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndStatusOrderByEndDesc(userId, REJECTED));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByBookerIdAndStatusOrderByEndDesc(userId, REJECTED, pageable).getContent());
             default:
                 throw new UnsupportedStatus("Unknown state: " + state);
         }
     }
 
     @Override
-    public List<BookingOutDto> findByOwnerAndState(Long ownerId, String state) {
+    public List<BookingOutDto> findByOwnerAndState(Long ownerId, String state, Integer from, Integer size) {
         userRepository.findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("Пользователь " + ownerId + " не найден"));
 
@@ -135,22 +136,21 @@ public class BookingServiceImpl implements BookingService {
         }
 
         LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from / size, size);
 
         switch (stateEnum) {
             case ALL:
-                List<Booking> bookingList1 = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId);
-                List<BookingOutDto> bookingOutDtoList1 = bookingMapper.toListOutDTO(bookingList1);
-                return bookingOutDtoList1;
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId, pageable).getContent());
             case CURRENT:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndStartLessThanEqualAndEndGreaterThanEqualOrderByStartDesc(ownerId, now, now));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndStartLessThanEqualAndEndGreaterThanEqualOrderByStartDesc(ownerId, now, now, pageable).getContent());
             case PAST:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndEndLessThanOrderByStartDesc(ownerId, now));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndEndLessThanOrderByStartDesc(ownerId, now, pageable).getContent());
             case FUTURE:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndStartGreaterThanOrderByStartDesc(ownerId, now));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndStartGreaterThanOrderByStartDesc(ownerId, now, pageable).getContent());
             case WAITING:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, WAITING));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, WAITING, pageable).getContent());
             case REJECTED:
-                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, REJECTED));
+                return bookingMapper.toListOutDTO(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, REJECTED, pageable).getContent());
             default:
                 throw new UnsupportedStatus("Unknown state: " + state);
         }

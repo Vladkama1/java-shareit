@@ -18,18 +18,8 @@ public interface CommentMapper {
     })
     Comment toModelCom(CommentDto commentDto);
 
-    @Mappings({
-            @Mapping(source = "comment.author.id", target = "authorId"),
-            @Mapping(source = "comment.item.id", target = "itemId")
-    })
-    CommentDto toDTOCom(Comment comment);
-
     @Mapping(source = "comment.author.name", target = "authorName")
     CommentOutDto toOutDTOCom(Comment comment);
-
-    List<Comment> toListModelsCom(List<CommentDto> commentDtoList);
-
-    List<CommentDto> toListDTOCom(List<Comment> commentList);
 
     @Mapping(source = "comment.author.name", target = "authorName")
     List<CommentOutDto> toListOutDTOCom(List<Comment> commentList);

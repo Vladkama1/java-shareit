@@ -22,17 +22,5 @@ public class ItemDto {
     @NotNull
     private Boolean available;
     private Long ownerId;
-    private String request;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ItemDto)) return false;
-        return id != null && id.equals(((ItemDto) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+    private Long requestId;
 }

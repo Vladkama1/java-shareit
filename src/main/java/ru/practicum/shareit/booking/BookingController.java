@@ -9,6 +9,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 import static ru.practicum.shareit.item.constant.ItemConstants.X_SHARER_USER_ID;
@@ -46,17 +48,21 @@ public class BookingController {
 
     @GetMapping
     public List<BookingOutDto> findByBookerAndState(@RequestHeader(X_SHARER_USER_ID) Long userId,
-                                                    @RequestParam(defaultValue = "ALL") String state) {
+                                                    @RequestParam(defaultValue = "ALL") String state,
+                                                    @RequestParam(defaultValue = "0") @Min(value = 0) Integer from,
+                                                    @RequestParam(defaultValue = "20") @Positive Integer size) {
         log.info("Получен запрос GET, на получение списка всех бронирований текущего пользователя: {}", userId);
-        return bookingService.findByBookerAndState(userId, state);
+        return bookingService.findByBookerAndState(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingOutDto> findByOwnerAndState(@RequestHeader(X_SHARER_USER_ID) Long userId,
-                                                   @RequestParam(defaultValue = "ALL") String state) {
+                                                   @RequestParam(defaultValue = "ALL") String state,
+                                                   @RequestParam(defaultValue = "0") @Min(value = 0) Integer from,
+                                                   @RequestParam(defaultValue = "20") @Positive Integer size) {
         log.info("Получен запрос GET, на получение списка бронирований " +
                 "для всех вещей текущего пользователя: {}", userId);
-        List<BookingOutDto> bookingOutDtoList = bookingService.findByOwnerAndState(userId, state);
+        List<BookingOutDto> bookingOutDtoList = bookingService.findByOwnerAndState(userId, state, from, size);
         return bookingOutDtoList;
     }
 }

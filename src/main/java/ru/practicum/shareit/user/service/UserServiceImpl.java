@@ -62,10 +62,4 @@ public class UserServiceImpl implements UserService {
         }
         return userMapper.toDTO(userRepository.save(userMapper.toModel(userDtoDB)));
     }
-
-    @Override
-    public boolean isExistUser(Long id) {
-        boolean exists = userRepository.existsById(id);
-        return exists;
-    }
 }

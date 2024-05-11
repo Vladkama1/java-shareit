@@ -20,4 +20,5 @@ public class ItemOutDto {
     private BookingShortOutDto lastBooking;
     private BookingShortOutDto nextBooking;
     private List<CommentOutDto> comments;
+    private Long requestId;
 }
