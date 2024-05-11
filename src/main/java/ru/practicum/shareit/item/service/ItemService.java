@@ -10,13 +10,13 @@ import java.util.List;
 public interface ItemService {
     ItemOutDto findById(Long userId, Long itemId);
 
-    List<ItemOutDto> getAllItemsOwner(Long ownerId);
+    List<ItemOutDto> getAllItemsOwner(Long ownerId,Integer from, Integer size);
 
     ItemOutDto saveItem(ItemDto itemDto, Long userId);
 
     ItemOutDto updateItem(Long userId, Long itemId, ItemDto itemDto);
 
-    List<ItemDto> searchBy(String text);
+    List<ItemDto> searchBy(String text,Integer from, Integer size);
 
     CommentOutDto addComment(Long userId, Long itemId, CommentDto requestDto);
 }

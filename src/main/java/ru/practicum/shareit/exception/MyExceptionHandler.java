@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.validation.ConstraintViolationException;
-
 @Slf4j
 @RestControllerAdvice
 public class MyExceptionHandler {
@@ -37,13 +35,6 @@ public class MyExceptionHandler {
     @ExceptionHandler(UnsupportedStatus.class)
     public ResponseEntity<ResponseError> handleUnsupportedStatus(final UnsupportedStatus e) {
         log.error("Exception UnsupportedStatus: {}, статус ответа: {}", e.getMessage(), HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ResponseError> handleConstraintViolationException(final ConstraintViolationException e) {
-        log.error("Exception ConstraintViolationException: {}, статус ответа: {}", e.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
