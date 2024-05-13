@@ -5,9 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
+import ru.practicum.shareit.booking.dto.BookingShortOutDto;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.dto.ItemOutDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.dto.UserOutDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -131,6 +134,30 @@ class BookingMapperTest {
         assertEquals(2, bookingOutDtos.size());
         assertEquals(bookings.get(0).getId(), bookingOutDtos.get(0).getId());
         assertEquals(bookings.get(1).getId(), bookingOutDtos.get(1).getId());
+    }
+
+    @Test
+    void shouldMapBookingOutDtoToBookingShortOutDto() {
+        BookingOutDto bookingOutDto = new BookingOutDto();
+        bookingOutDto.setId(1L);
+        bookingOutDto.setStart(LocalDateTime.now());
+        bookingOutDto.setEnd(LocalDateTime.now().plusDays(1));
+        UserOutDto booker = new UserOutDto();
+        booker.setId(2L);
+        bookingOutDto.setBooker(booker);
+        ItemOutDto item = new ItemOutDto();
+        item.setId(3L);
+        bookingOutDto.setItem(item);
+        bookingOutDto.setStatus(Status.APPROVED);
+
+        BookingShortOutDto bookingShortOutDto = bookingMapper.toShortOutDTO(bookingOutDto);
+
+        assertNotNull(bookingShortOutDto);
+        assertEquals(bookingOutDto.getId(), bookingShortOutDto.getId());
+        assertEquals(bookingOutDto.getStart(), bookingShortOutDto.getStart());
+        assertEquals(bookingOutDto.getEnd(), bookingShortOutDto.getEnd());
+        assertEquals(bookingOutDto.getBooker().getId(), bookingShortOutDto.getBookerId());
+        // Проверьте статус, если он должен быть отображен в BookingShortOutDto
     }
 
     @Test

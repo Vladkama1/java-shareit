@@ -30,11 +30,4 @@ public class MyExceptionHandler {
         log.error("Exception BadRequestException: {}, статус ответа: {}", e.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UnsupportedStatus.class)
-    public ResponseEntity<ResponseError> handleUnsupportedStatus(final UnsupportedStatus e) {
-        log.error("Exception UnsupportedStatus: {}, статус ответа: {}", e.getMessage(), HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
-    }
 }

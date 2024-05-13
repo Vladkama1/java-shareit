@@ -37,9 +37,7 @@ public class RequestController {
                                       @RequestParam Integer from,
                                       @RequestParam Integer size) {
         log.info("Получен запрос GET, на получения всех запросов.");
-        List<RequestDto> requestDtoList = requestService.findByAll(userId, from, size);
-        log.info("Получен ответ, список запросов, размер: {}", requestDtoList.size());
-        return requestDtoList;
+        return requestService.findByAll(userId, from, size);
     }
 
     @GetMapping("/{requestId}")
