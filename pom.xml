@@ -28,6 +28,16 @@
 		<module>server</module>
 	</modules>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+					<groupId>org.mapstruct</groupId>
+					<artifactId>mapstruct</artifactId>
+					<version>${mapstruct.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<build>
 		<resources>
 			<resource>
